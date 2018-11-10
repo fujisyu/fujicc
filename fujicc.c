@@ -5,8 +5,8 @@
 
 // トークンの型を表す値
 enum {
-			TK_NUM = 256,  // 整数トークン
-			TK_EOF,        // 入力の終わりを表すトークン
+			TK_NUM = 256, // 整数トークン
+			TK_EOF,				// 入力の終わりを表すトークン
 };
 
 // トークンの型
@@ -17,14 +17,14 @@ typedef struct {
 } Token;
 
 typedef struct Node {
-	int ty;												// 演算子かND_NUM
-	struct Node* lhs;							// 左辺
-	struct Node* rhs;							// 右辺
-	int val;											// tyがND_NUMの場合のみ使う
+	int ty;							// 演算子かND_NUM
+	struct Node* lhs;		// 左辺
+	struct Node* rhs;		// 右辺
+	int val;						// tyがND_NUMの場合のみ使う
 } Node;
 
 enum {
-			ND_NUM = 256,							// 整数のノードの型
+			ND_NUM = 256,		// 整数のノードの型
 };
 
 Node* new_node (int op, Node *lhs, Node *rhs) {
@@ -133,45 +133,45 @@ Node *term() {
 
 	if (tokens[pos].ty == '(')
 		pos++;
-		Node *node = expr();
-		if (tokens[pos].ty != ')' )
-			error (pos);
+	Node *node = expr();
+	if (tokens[pos].ty != ')' )
+		error (pos);
 
-		pos++;
-		return node;
+	pos++;
+	return node;
 
 	error(pos);
 
 }
 
 void gen (Node *node) {
-	 if (node->ty == ND_NUM) {
-		 printf("  push %d\n", node->val);
-		 return;
-	 }
+	if (node->ty == ND_NUM) {
+		printf("  push %d\n", node->val);
+		return;
+	}
 
-	 gen(node->lhs);
-	 gen(node->rhs);
+	gen(node->lhs);
+	gen(node->rhs);
 
-	 printf("  pop rdi\n");
-	 printf("  pop rax\n");
+	printf("  pop rdi\n");
+	printf("  pop rax\n");
 
-	 switch (node->ty) {
-	 case '+':
-		 printf("  add rax, rdi\n");
-	 break;
-	 case '-':
-		 printf("  sub rax, rdi\n");
-	 break;
-	 case '*':
-		 printf("  mul rdi\n");
-	 break;
-	 case '/':
-		 printf("  mov rdx, 0\n");
-		 printf("  div rdi\n");
- }
+	switch (node->ty) {
+	case '+':
+		printf("  add rax, rdi\n");
+		break;
+	case '-':
+		printf("  sub rax, rdi\n");
+		break;
+	case '*':
+		printf("  mul rdi\n");
+		break;
+	case '/':
+		printf("  mov rdx, 0\n");
+		printf("  div rdi\n");
+	}
 
- printf(" push rax\n");
+	printf(" push rax\n");
 }
 
 int main(int argc, char **argv) {
